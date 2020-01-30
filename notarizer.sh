@@ -12,23 +12,18 @@
 #    -v APP_VERSION - application version
 #    -c CODESIGN_IDENTITY - certificate identity usable for signing code
 #    -p PRODUCTSIGN_IDENTITY - certificate identity usable for signing installer
-#    [-r PROVIDER] - apple developer account team identifier
+#    [-o PACKAGE_NAME] - output package name - ["package"]
 #.   [-d DESTINATION] - installation destination folder - ["/usr/local/bin"]
-#    [-h] - help
+#    [-r PROVIDER] - apple developer account team identifier - [""]
 
 set -e
 
-archive=""
-app_id=""
-app_version=""
-developer_account_user=""
-codesign_identity=""
-productsign_identity=""
-provider=""
+temp_folder=""
 
+# Defaults.
+provider=""
 package_name="package"
 destination="/usr/local/bin"
-
 
 function cleanup {
     rm -rf $temp_folder
@@ -42,12 +37,15 @@ function usage() {
     echo "    -v APP_VERSION \\"
     echo "    -c CODESIGN_IDENTITY \\"
     echo "    -p PRODUCTSIGN_IDENTITY \\"
-    echo "    [-r PROVIDER] [-d DESTINATION] | [-h]"
+    echo "    [-o PACKAGE_NAME] \\"
+    echo "    [-r PROVIDER] \\"
+    echo "    [-d DESTINATION]"
 }
 
 function process() {
     # Make temporary and package root directories.
-    local temp_folder=`mktemp -d -t "notarizer"`
+    temp_folder=`mktemp -d -t "notarizer"`
+
     local package_root="${temp_folder}/root"
     mkdir $package_root
 
@@ -139,6 +137,9 @@ while [ "$1" != "" ]; do
                                         ;;
         -r | --provider )               shift
                                         provider=$1
+                                        ;;
+        -o | --package_name )           shift
+                                        package_name=$1
                                         ;;
         -h | --help )                   usage
                                         exit

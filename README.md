@@ -2,20 +2,73 @@
 
 macOS notarizing frontend.
 
-Depends on Xcode commandline tools as well as [gon](https://github.com/mitchellh/gon), a tool that allows us to poll the notarizing session status easily.
+Depends on Xcode commandline tools as well as [gon](https://github.com/mitchellh/gon), a tool that allows us to poll the notarizing session status easily. Wraps gon by adding steps needed for codesigning and packaging into a macOS package `pkg` installer.
+
+## Preparation
+
+### Application Specific Password
+
+The password this document later on refers to is not the developer account password as entered into the developer portal. Instead it is an application specific password one can create via the [Apple account management](https://appleid.apple.com/account/manage).
+
+### Code- and installer-signing identity
+
+Check whether the application and installer signing certificates were properly installed and get their names;
+
+```bash
+security find-identity
+```
+
+Example
+```
+Policy: X.509 Basic
+ Matching identities
+ 1) 04061D266E3097D4FEC9682C48CC1676923CA72D "Mac Developer: Till Toenshoff (359X484G5G)" (CSSMERR_TP_CERT_EXPIRED)
+ 2) 1CA595637509E3414FCBBC04CC70AF8A25CA3AE9 "Developer ID Application: Till Toenshoff (YK4D72U3YW)"
+ 3) BB89DE48FF589E465081CB0FBBECB863F8424F31 "Developer ID Installer: Till Toenshoff (YK4D72U3YW)"
+ 4) F55A517E699593F7CCBDBF8F2A9D78FD68ED44A5 "Apple Development: Till Toenshoff (359X484G5G)"
+ 4 identities found
+
+Valid identities only
+ 1) 1CA595637509E3414FCBBC04CC70AF8A25CA3AE9 "Developer ID Application: Till Toenshoff (YK4D72U3YW)"
+ 2) BB89DE48FF589E465081CB0FBBECB863F8424F31 "Developer ID Installer: Till Toenshoff (YK4D72U3YW)"
+ 3) F55A517E699593F7CCBDBF8F2A9D78FD68ED44A5 "Apple Development: Till Toenshoff (359X484G5G)"
+ 3 valid identities found
+```
+
+### iTunes Providers
+
+If the signing developer account is member of multiple developer teams, the provider is needed to identify the iTunes account / team. In case the below returns only one line, we won't need to specify the provider later on.
+
+Note how we make use of an [Application Specific Password](#application-specific-password) here - make sure it is set.
+```bash
+xcrun iTMSTransporter -m provider -u tilltoenshoff@gmail.com -p $AC_PASSWORD
+```
+
+Example
+```
+Provider listing:
+ - Long Name - - Short Name -
+1 Mesosphere Inc. JQJDUUPXFN
+2 Till Toenshoff|1054576390 YK4D72U3YW
+```
+
 
 ## Usage
 
--a ARCHIVE - tarball containing all contents for distribution
--u DEVELOPER_ACCOUNT_USER - apple developer account user name
--i APP_ID - unique application identifier
--v APP_VERSION - application version
--c CODESIGN_IDENTITY - certificate identity usable for signing code
--p PRODUCTSIGN_IDENTITY - certificate identity usable for signing installer
-[-o PACKAGE_NAME] - output package name - ["package"]
-[-r PROVIDER] - apple developer account team identifier - [""]
-[-d DESTINATION] - installation destination folder - ["/usr/local/bin"]
-[-h] - help
+|    |                          |                                                      |
+|----|--------------------------|------------------------------------------------------|
+| -a | --archive                | tarball containing all contents for distribution     |
+| -i | --app_id                 | unique application identifier                        |
+| -v | --app_version 	        | application version                                  |
+| -c | --codesign_identity      | certificate identity usable for signing code         |
+| -p | --productsign_identity   | certificate identity usable for signing installer    |
+| -u | --developer_account_user | apple developer account user name                    |
+| -d | --destination            | installation destination folder - ["/usr/local/bin"] |
+| -r | --provider               | apple developer account team identifier - [""].      |
+| -o | --package_name           | output package name - ["package"]                    |
+| -h | --help                   |                                                      |
+
+Make sure you provide the [Application Specific Password](#application-specific-password) using the environment variable "AC_PASSWORD".
 
 Example
 ```bash
@@ -30,9 +83,9 @@ AC_PASSWORD=XXXXX notarizer.sh \
     -o "test"
 ```
 
-The first steps are quick;
+The first steps will be processed quickly;
 - extracting the given tarball
-- signing all the binaries found
+- signing all the executables found
 - packaging
 - signing the package
 
