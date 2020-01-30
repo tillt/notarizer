@@ -13,7 +13,7 @@
 #    -c CODESIGN_IDENTITY - certificate identity usable for signing code
 #    -p PRODUCTSIGN_IDENTITY - certificate identity usable for signing installer
 #    [-o PACKAGE_NAME] - output package name - ["package"]
-#.   [-d DESTINATION] - installation destination folder - ["/usr/local/bin"]
+#    [-d DESTINATION] - installation destination folder - ["/usr/local/bin"]
 #    [-r PROVIDER] - apple developer account team identifier - [""]
 
 set -e
@@ -94,7 +94,7 @@ function process() {
     }
 }
 EOF
-    gon -log-level=info $temp_folder/$package_name.json && cp ${temp_folder}/${package_name}.pkg .
+    gon -log-level=info $temp_folder/$package_name.json && cp $temp_folder/$package_name.pkg .
 }
 
 function main() {
