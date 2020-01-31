@@ -16,7 +16,7 @@
 #    [-d DESTINATION] - installation destination folder - ["/usr/local/bin"]
 #    [-r PROVIDER] - apple developer account team identifier - [""]
 
-set -e
+set +e
 
 temp_folder=""
 
