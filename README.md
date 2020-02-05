@@ -143,7 +143,9 @@ The process of notarization does currently appear to only check a few things and
 	+ safe use in this context means that e.g. we don't do JIT compilation via system functions
 
 
-## User experience on macOS 10.15.3 (19D76)
+## User Experience: Commandline Tools
+
+### macOS 10.15.3 (19D76)
 
 * Downloaded unsigned and unnotarized content, now trying to run
     - Will not work at all
