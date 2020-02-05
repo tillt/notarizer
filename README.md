@@ -129,15 +129,47 @@ The process of notarization does currently appear to only check a few things and
 > The signature of the binary is invalid.
 > The binary is not signed with a valid Developer ID certificate.
 > The signature does not include a secure timestamp.
+
 - checks for proper signatures
 
 > The executable requests the com.apple.security.get-task-allow entitlement.
+
 - checks for widened debugging rights not being embedded
 
 > The binary uses an SDK older than the 10.9 SDK.
 > The executable does not have the hardened runtime enabled.
+
 - checks for safe use of linked system libraries version higher than 10.9
 	+ safe use in this context means that e.g. we don't do JIT compilation via system functions
+
+
+## User experience on macOS 10.15.3 (19D76)
+
+* Downloaded unsigned and unnotarized content, now trying to run
+    - Will not work at all
+
+The user will be told that the app was from an unknown developer and the only sane solution was to delete it via bin.
+![Not even signed](site/images/raw_download.png)
+
+
+* Downloaded signed but unnotarized content, now trying to run
+    - Will not work at all
+
+The user will get informed that the app needs an update -- note how here we are not asked to delete:
+![Not notarized](site/images/signed_not_notarized.png)
+
+
+* Downloaded signed and notarized content (via ZIP or raw), now trying to run it
+    - Will work fine when run from the terminal while connected to the interwebs, will **not** work when using Finder. Finder bug?
+
+Finder will still claim unknown developer sources:
+![Notarized not stapled](site/images/notarized_not_stapled.png)
+
+
+* Downloaded signed, bundled, notarized and stapled content, installed that and now trying to run
+    - Wll work with and without interwebs-connection -- works when started via terminal or Finder.
+
+Things behave in all scenarios. Nothing to show.
 
 
 ## Links
