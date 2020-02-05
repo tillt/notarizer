@@ -148,14 +148,14 @@ The process of notarization does currently appear to only check a few things and
 * Downloaded unsigned and unnotarized content, now trying to run
     - Will not work at all
 
-The user will be told that the app was from an unknown developer and the only sane solution was to delete it via bin.
+The user will be told that the app was from an unknown developer and the only sane solution was to delete it.
 ![Not even signed](site/images/raw_download.png)
 
 
 * Downloaded signed but unnotarized content, now trying to run
     - Will not work at all
 
-The user will get informed that the app needs an update -- note how here we are not asked to delete:
+The user will get informed that the app needs an update. Note how here we are not asked to delete. That in itself does actually make a lot of sense considering the fact that notarizing without stapling does not mutate the binary (or bundle);
 ![Not notarized](site/images/signed_not_notarized.png)
 
 
@@ -167,7 +167,7 @@ Finder will still claim unknown developer sources:
 
 
 * Downloaded signed, bundled, notarized and stapled content, installed that and now trying to run
-    - Wll work with and without interwebs-connection -- works when started via terminal or Finder.
+    - Will work with and without interwebs-connection -- works when started via terminal or Finder.
 
 Things behave in all scenarios. Nothing to show.
 
